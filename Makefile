@@ -9,7 +9,7 @@ distro:
 
 v86:
 	docker build -t v86-builder ./v86
-	docker run --rm -v ./v86:/dst v86-builder
+	docker run --rm -v ${PWD}/v86:/dst v86-builder
 
 serve:
 	python3 -m http.server 8000
