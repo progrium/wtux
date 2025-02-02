@@ -4,38 +4,45 @@ Minimal i386 Linux distro for Wanix/v86
 
 ## Prerequisites 
 
+* make
 * Docker (build on any platform)
 * QEMU (for testing)
+* python3 (for http)
 
 ## Building
 
 ```sh
-./build.sh
+make distro
 ```
 
-This uses Docker to produce a kernel and initramfs in `./output` which together should be just over 4MB. Would love to make this smaller.
+This uses Docker to produce a kernel and initramfs in `./output` which together should be about 3MB. Would love to make this even smaller.
 
-## Testing
+## Testing with QEMU
 
 ```sh
-qemu-system-i386 \
-    -kernel output/bzImage \
-    -initrd output/initramfs.gz \
-    -append "console=ttyS0 init=/init" \
-    -netdev user,id=net0 \
-    -device virtio-net-pci,netdev=net0 \
-    -nographic \
-    -no-reboot
+make qemu
 ```
 
-## Caveats
+This will run QEMU using the files in `./output`. 
 
-No idea what I'm doing. Got this far working with Claude. Unfortunately, we started going in circles trying to get DNS working.
+## Testing with v86
 
-## TODO
+First build v86 files. This only needs to be done once:
 
-* [ ] Fix DNS (`bad address`)
-* [ ] Test in v86
-* [ ] Test virtio 9P root
-* [ ] Make it smaller!
-* [ ] Add musl and apk for Alpine package support?
+```sh
+make v86
+```
+
+Now start an HTTP server. This make task uses python3:
+
+```sh
+make serve
+```
+
+Now browse to `http://localhost:8000`.
+
+## Source
+
+* Kernel config is in `kernel.config`
+* Kernel and busybox are built in `Dockerfile`
+* Init script is defined in `init`

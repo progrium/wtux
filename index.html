@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wtux v86 tester</title>
+    <script src="./v86/libv86.js"></script>
+</head>
+<body>
+    <div id="screen_container">
+        <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
+        <canvas style="display: none"></canvas>
+    </div>
+
+    <script>
+        var emulator = new V86({
+            wasm_path: "./v86/v86.wasm",
+            screen_container: document.getElementById("screen_container"),
+            memory_size: 512 * 1024 * 1024,
+            vga_memory_size: 8 * 1024 * 1024,
+            bios: { url: "./v86/seabios.bin" },
+            vga_bios: { url: "./v86/vgabios.bin" },
+            bzimage: { url: "./output/bzImage" },
+            initrd: { url: "./output/initramfs.gz" },
+            net_device_type: "virtio",
+            cmdline: "tsc=reliable mitigations=off random.trust_cpu=on modules=virtio_pci wtux=v86",
+            autostart: true,
+        });
+    </script>
+</body>
+</html>

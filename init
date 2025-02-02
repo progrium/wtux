@@ -1,0 +1,24 @@
+#!/bin/busybox sh
+/bin/busybox --install -s /bin
+
+mount -t proc none /proc
+mount -t sysfs none /sys
+mount -t devtmpfs none /dev
+
+# get the wtux kernel argument.
+# we use this to mount the host9p filesystem v86 may be providing.
+wtux=$(cat /proc/cmdline | awk '/wtux=/{split($0,a," "); for(i in a) if(a[i]~/^wtux=/) {sub(/^wtux=/,"",a[i]); print a[i]; exit}}')
+if [ "$wtux" = "v86" ]; then
+    mkdir -p /mnt/host9p
+    mount -t 9p -o trans=virtio,cache=loose host9p /mnt/host9p
+fi
+
+#/bin/busybox ip link set dev eth0 up
+#/bin/busybox ip addr add 10.0.2.15/24 dev eth0
+#/bin/busybox ip route add default via 10.0.2.2
+
+sleep 1 # let kernel messages finish
+
+# start shell on tty1 with job control after clearing screen
+setsid /bin/busybox sh -c "clear && \
+    exec /bin/busybox sh </dev/tty1 >/dev/tty1 2>&1"

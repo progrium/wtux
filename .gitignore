@@ -1,1 +1,5 @@
 /output
+/v86/libv86.js
+/v86/v86.wasm
+/v86/seabios.bin
+/v86/vgabios.bin
