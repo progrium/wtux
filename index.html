@@ -23,7 +23,8 @@
             bzimage: { url: "./output/bzImage" },
             initrd: { url: "./output/initramfs.gz" },
             net_device_type: "virtio",
-            cmdline: "tsc=reliable mitigations=off random.trust_cpu=on modules=virtio_pci",
+            cmdline: "tsc=reliable mitigations=off random.trust_cpu=on modules=virtio_pci wtux=debug9p",
+            testfs: true,
             autostart: true,
         });
     </script>

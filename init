@@ -10,6 +10,10 @@ mount -t devtmpfs none /dev
 # and use ttyS0 for console
 wtux=$(cat /proc/cmdline | awk '/wtux=/{split($0,a," "); for(i in a) if(a[i]~/^wtux=/) {sub(/^wtux=/,"",a[i]); print a[i]; exit}}')
 console="tty1"
+if [ "$wtux" = "debug9p" ]; then
+    mkdir -p /mnt/host9p
+    mount -t 9p -o trans=virtio,cache=loose host9p /mnt/host9p
+fi
 if [ "$wtux" = "wanix" ]; then
     mkdir -p /mnt/host9p
     mount -t 9p -o trans=virtio,cache=loose host9p /mnt/host9p
