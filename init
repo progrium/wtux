@@ -5,12 +5,19 @@ mount -t proc none /proc
 mount -t sysfs none /sys
 mount -t devtmpfs none /dev
 
-# get the wtux kernel argument to mount
-# the host9p filesystem v86 may be providing
+# get the wtux kernel argument if using for wanix to
+# mount the host9p filesystem v86 may be providing
+# and use ttyS0 for console
 wtux=$(cat /proc/cmdline | awk '/wtux=/{split($0,a," "); for(i in a) if(a[i]~/^wtux=/) {sub(/^wtux=/,"",a[i]); print a[i]; exit}}')
-if [ "$wtux" = "host9p" ]; then
+console="tty1"
+if [ "$wtux" = "debug9p" ]; then
     mkdir -p /mnt/host9p
     mount -t 9p -o trans=virtio,cache=loose host9p /mnt/host9p
+fi
+if [ "$wtux" = "wanix" ]; then
+    mkdir -p /mnt/host9p
+    mount -t 9p -o trans=virtio,cache=loose host9p /mnt/host9p
+    console="ttyS0"
 fi
 
 #ip link set dev eth0 up
@@ -20,6 +27,5 @@ fi
 # let kernel messages finish
 sleep 1 
 
-# start shell on tty1 with job control after clearing screen
-setsid /bin/busybox sh -c "clear && \
-    exec /bin/busybox sh </dev/tty1 >/dev/tty1 2>&1"
+# start shell on $console with job control
+setsid /bin/busybox sh -c "exec /bin/busybox sh </dev/${console} >/dev/${console} 2>&1"
